@@ -12,7 +12,7 @@ public class TestController {
 
     @RequestMapping("/welcome")
     public Map firstPage() {
-        map.put("ciao", "ciao");
+        map.put("ciao", "ciao2");
         return map;
     }
 
