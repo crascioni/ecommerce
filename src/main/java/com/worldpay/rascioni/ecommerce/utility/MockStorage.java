@@ -11,8 +11,6 @@ public class MockStorage {
     List<Offer> list = new ArrayList<>();
     
     private MockStorage() {
-        Offer off = new Offer("Tappeto", "Un bel tappeto", 20f, 60);
-        list.add(off);    
     }
     
     public static MockStorage getInstance() {

@@ -26,10 +26,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public ResponseEntity<String> addOffer(AddOfferCommand bean) {
-        
-        
-        if(isPresent(bean.getTitle())) return new ResponseEntity<String>("The element has already been added", HttpStatus.CONFLICT);
-        
+        if(isPresent(bean.getTitle())) {
+            return new ResponseEntity<String>("The element has already been added", HttpStatus.CONFLICT);
+        }       
         Offer offer = new  Offer(
                 bean.getTitle(), 
                 bean.getDesc(), 
@@ -40,6 +39,7 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.addOffer(offer);
         return new ResponseEntity<String>("The element has been added to the collection", HttpStatus.OK);
     }
+    
     /**
      * Check if an offer with this name is already inside the collection
      * @param title the name of the new offer
@@ -47,7 +47,9 @@ public class OfferServiceImpl implements OfferService {
      */
     private boolean isPresent(String title) {
         for(Offer offer: MockStorage.getInstance().getData()) {
-            if(offer.getTitle().equals(title)) return true;
+            if(offer.getTitle().equals(title)) { 
+                return true;
+            }
         }
         return false;
     }
