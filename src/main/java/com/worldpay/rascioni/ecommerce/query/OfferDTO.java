@@ -1,18 +1,14 @@
-package com.worldpay.rascioni.ecommerce.command;
+package com.worldpay.rascioni.ecommerce.query;
 
-import java.io.Serializable;
-
-public class AddOfferCommand implements Serializable{
-    private static final long serialVersionUID = 1L;
-    
-    // the title of the offer
+public class OfferDTO {
+ // the title of the offer
     private String title;
     // the desc of the offer
     private String desc;
     // the price of the offer
-    private Float price;
+    private String price;
     //expiration time in min
-    private Integer expTime;
+    private String expTime;
     
     
     public String getTitle() {
@@ -27,18 +23,17 @@ public class AddOfferCommand implements Serializable{
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    public Float getPrice() {
+    public String getPrice() {
         return price;
     }
-    public void setPrice(Float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
-    public Integer getExpTime() {
+    public String getExpTime() {
         return expTime;
     }
-    public void setExpTime(Integer expTime) {
+    public void setExpTime(String expTime) {
         this.expTime = expTime;
     }
-    
-    
+
 }

@@ -8,6 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.worldpay.rascioni.ecommerce.bean.Offer;
 
+/**
+ * This is a mock class to store the data. Offers are inside the timeMap, which has the following structure: Offer - Expiration time
+ * After the initialization, a thread scans the map and removes all the expired offers.
+ * @author Christian
+ *
+ */
 public class MockStorage {
     private static MockStorage mock = new MockStorage();
     private Map<Offer, LocalDateTime> timeMap = new ConcurrentHashMap<Offer, LocalDateTime>();
@@ -25,16 +31,28 @@ public class MockStorage {
         return mock;
     }
     
+    /**
+     * 
+     * @return the offers
+     */
     public Set<Offer> getData(){
         return timeMap.keySet();
     }
     
-    public void addOffer(Offer bean) {
-        
+    /**
+     * Add an offer to the map
+     * @param bean the offer
+     */
+    public void addOffer(Offer bean) {    
         LocalDateTime localDate = LocalDateTime.now().plus(bean.getExpTime(), ChronoUnit.MINUTES);
         timeMap.put(bean, localDate);
     }
 
+    /**
+     * Get the offers with this title
+     * @param title name of the offer
+     * @return if it exists, return the associated offers - otherwise, return null
+     */
     public Offer getOfferByTitle(String title) {
         for (Offer offer : timeMap.keySet()) {
             if(offer.getTitle().equals(title)) return offer;
@@ -42,6 +60,10 @@ public class MockStorage {
         return null;
     }
 
+    /**
+     * remove the offer
+     * @param bean
+     */
     public void removeOffer(Offer bean) {
         timeMap.remove(bean);
         
@@ -61,6 +83,9 @@ public class MockStorage {
             }
         }
 
+        /**
+         * Scan the map and remove the expired elements.
+         */
         private void cleanMap() {
             LocalDateTime localDate = LocalDateTime.now();
             for (Offer key : timeMap.keySet()) {

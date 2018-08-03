@@ -8,9 +8,13 @@ import com.worldpay.rascioni.ecommerce.Constants;
 public class Offer implements Serializable{
     private static final long serialVersionUID = 1L;
     
+    // The unique id
     private String id;
+    // The title of the offer
     private String title;
+    // The desc of the offer
     private String desc;
+    // The price of the offer
     private Float price;
     //expiration time in second
     private Integer expTime;
