@@ -27,7 +27,7 @@ public class EcommerceApplicationTests {
     }
 
     /**
-     * I've used BDD for this test.
+     * I've used BDD for this test, testing the behavior instead of the implementation.
      * 
      */
     @Test
@@ -55,6 +55,15 @@ public class EcommerceApplicationTests {
     public void getHighestPriceOk() {
         offerRepo.addOffer(offer);
         assertSame("Element added", offer.getPrice(), MockStorage.getInstance().getHighestPrice());
+
+    }
+
+    @Test
+    public void removeElementOk() {
+        Integer size = MockStorage.getInstance().getData().size();
+        offerRepo.addOffer(offer);
+        offerRepo.removeOffer(offer);
+        assertSame("Element added", size, MockStorage.getInstance().getData().size());
 
     }
 
