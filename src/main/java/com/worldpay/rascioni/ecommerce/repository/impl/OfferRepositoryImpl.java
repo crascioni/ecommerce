@@ -1,6 +1,6 @@
 package com.worldpay.rascioni.ecommerce.repository.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
@@ -12,13 +12,19 @@ import com.worldpay.rascioni.ecommerce.utility.MockStorage;
 public class OfferRepositoryImpl implements OfferRepository {
 
     @Override
-    public List<Offer> getOffers() {
+    public Set<Offer> getOffers() {
         return MockStorage.getInstance().getData();
     }
 
     @Override
     public void addOffer(Offer bean) {
         MockStorage.getInstance().addOffer(bean);
+        
+    }
+
+    @Override
+    public void removeOffer(Offer bean) {
+        MockStorage.getInstance().removeOffer(bean);
         
     }
 

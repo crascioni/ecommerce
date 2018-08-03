@@ -14,14 +14,12 @@ public class Offer implements Serializable{
     private Float price;
     //expiration time in second
     private Integer expTime;
-    private String status;
     
     
     
     
     public Offer(String title, String desc, Float price, Integer expTime) {
         this.id = UUID.randomUUID().toString();
-        this.status = Constants.ACTIVE;
         this.title = title;
         this.desc = desc;
         this.price = price;
@@ -62,19 +60,13 @@ public class Offer implements Serializable{
     public void setExpTime(Integer expTime) {
         this.expTime = expTime;
     }
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
 
 
     @Override
     public String toString() {
         return "Offer [id=" + id + ", title=" + title + ", desc=" + desc + ", price=" + price + Constants.CURRENCY + ", expTime=" + expTime
-                + " seconds, status=" + status + "]";
+                + " seconds," + "]";
     }
     
     
