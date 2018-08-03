@@ -5,6 +5,7 @@ Assumptions:
 - The currency is defined
 - There is a test which fails, this is just to show how I applied TDD
 - The expTime is in minutes
+- He can't add two elements with the same title
 
 As a Spring Rest Application, it provides the following services:
 
