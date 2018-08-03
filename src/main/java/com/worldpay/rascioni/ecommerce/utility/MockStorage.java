@@ -15,7 +15,7 @@ import com.worldpay.rascioni.ecommerce.bean.Offer;
  *
  */
 public class MockStorage {
-    private static MockStorage mock = new MockStorage();
+    private static MockStorage mock;
     private Map<Offer, LocalDateTime> timeMap = new ConcurrentHashMap<Offer, LocalDateTime>();
     private long expiryTimeInMillis = 1000;
     
@@ -28,6 +28,8 @@ public class MockStorage {
     }
     
     public static MockStorage getInstance() {
+        if(mock != null) return mock;
+        mock = new MockStorage();
         return mock;
     }
     
@@ -67,6 +69,14 @@ public class MockStorage {
     public void removeOffer(Offer bean) {
         timeMap.remove(bean);
         
+    }
+    
+    /**
+     * return the offer which has the highest price
+     * @return
+     */
+    public Offer getHighestPrice() {
+        return null;
     }
     
     class CleanerT extends Thread {
