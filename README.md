@@ -4,7 +4,7 @@ Assumptions:
 - Data are stored in a Map
 - The currency is defined
 - There is a test which fails, this is just to show how I've applied TDD (testing before writing the behavior). I've also used BDD for some tests.
-- The expTime is in minutes
+- The expiration time (expTime) is in minutes
 - He can't add two elements with the same title
 - I've written just a few tests to show how I work with JUnit, TDD and BDD.
 
