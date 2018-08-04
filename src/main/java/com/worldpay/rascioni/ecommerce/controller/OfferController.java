@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.worldpay.rascioni.ecommerce.command.AddOfferCommand;
 import com.worldpay.rascioni.ecommerce.command.RemoveOfferCommand;
+import com.worldpay.rascioni.ecommerce.exception.InternalServerErrorException;
+import com.worldpay.rascioni.ecommerce.exception.MissingDataException;
+import com.worldpay.rascioni.ecommerce.exception.OfferAlreadyAddedException;
+import com.worldpay.rascioni.ecommerce.exception.OfferNotAddedException;
 import com.worldpay.rascioni.ecommerce.query.OfferDTO;
 import com.worldpay.rascioni.ecommerce.service.OfferService;
 
@@ -45,7 +49,22 @@ public class OfferController {
      */
     @RequestMapping(value = "/addOffer", method = RequestMethod.POST)
     public ResponseEntity<String> addOffer(@RequestBody AddOfferCommand bean) {
-        return offerService.addOffer(bean);
+        ResponseEntity<String> response = null;
+        try {
+            response = new ResponseEntity<String>(offerService.addOffer(bean), HttpStatus.OK);
+        } catch (MissingDataException e) {
+            System.out.println(e);
+            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (OfferAlreadyAddedException e) {
+            System.out.println(e);
+            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+            e.printStackTrace();
+            System.out.println(e);
+        } catch (InternalServerErrorException e) {
+            System.out.println(e);
+            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }      
+        return response;
     }
     
     /**
@@ -55,7 +74,20 @@ public class OfferController {
      */
     @RequestMapping(value = "/removeOffer", method = RequestMethod.POST)
     public ResponseEntity<String> removeOffer(@RequestBody RemoveOfferCommand bean) {
-        return offerService.removeOffer(bean);
+        ResponseEntity<String> response = null;
+        try {
+            response = new ResponseEntity<String>( offerService.removeOffer(bean), HttpStatus.OK);
+        } catch (MissingDataException e) {
+            System.out.println(e);
+            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (OfferNotAddedException e) {
+            System.out.println(e);
+            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (InternalServerErrorException e) {
+            System.out.println(e);
+            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
     }
 
 }

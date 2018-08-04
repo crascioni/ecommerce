@@ -10,8 +10,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.worldpay.rascioni.ecommerce.bean.Offer;
+import com.worldpay.rascioni.ecommerce.command.AddOfferCommand;
+import com.worldpay.rascioni.ecommerce.command.RemoveOfferCommand;
+import com.worldpay.rascioni.ecommerce.exception.InternalServerErrorException;
+import com.worldpay.rascioni.ecommerce.exception.MissingDataException;
+import com.worldpay.rascioni.ecommerce.exception.OfferAlreadyAddedException;
+import com.worldpay.rascioni.ecommerce.exception.OfferNotAddedException;
 import com.worldpay.rascioni.ecommerce.repository.OfferRepository;
-import com.worldpay.rascioni.ecommerce.utility.MockStorage;
+import com.worldpay.rascioni.ecommerce.service.IdFactory;
+import com.worldpay.rascioni.ecommerce.service.OfferService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -19,51 +26,74 @@ public class EcommerceApplicationTests {
 
     @Autowired
     OfferRepository offerRepo;
+
+    @Autowired
+    OfferService offerService;
+
+    @Autowired
+    IdFactory idFactory;
+
     Offer offer;
 
     @Before
-    public void init() {
-        offer = new Offer("Mock", "this is a mock", 200f, 1);
+    public void setup() {
+        offer = new Offer(idFactory.create(), "Mock", "this is a mock", 200f, 1);
+    }
+
+    @Test(expected = MissingDataException.class)
+    public void addOfferBadRequest() throws MissingDataException, OfferAlreadyAddedException, InternalServerErrorException {
+        AddOfferCommand emptyOffer = new AddOfferCommand();
+        
+        offerService.addOffer(emptyOffer);
+
+    }
+
+    @Test(expected = OfferAlreadyAddedException.class)
+    public void addOfferWithSameTitle() throws MissingDataException, OfferAlreadyAddedException, InternalServerErrorException {
+        AddOfferCommand offerCommand = new AddOfferCommand();
+        offerCommand.setTitle(offer.getTitle());
+        offerCommand.setPrice(offer.getPrice());
+        offerCommand.setExpTime(offer.getExpTime());
+        offerRepo.addOffer(offer);
+
+        offerService.addOffer(offerCommand);
     }
 
     /**
-     * I've used BDD for this test, testing the behavior instead of the implementation.
+     * This test fails. It shows how I apply TDD, writing the test before
+     * implementation.
+     * @throws InternalServerErrorException 
+     * @throws OfferAlreadyAddedException 
+     * @throws MissingDataException 
      * 
      */
     @Test
-    public void addElementOk() {
-        Integer size = MockStorage.getInstance().getData().size();
-        offerRepo.addOffer(offer);
-        assertSame("Element added", size + 1, MockStorage.getInstance().getData().size());
+    public void getHighestPriceRepoOk() throws MissingDataException, OfferAlreadyAddedException, InternalServerErrorException {
+        AddOfferCommand offerCommand = new AddOfferCommand();
+        offerCommand.setTitle("Mock");
+        offerCommand.setPrice(200f);
+        offerCommand.setExpTime(1);
+        offerService.addOffer(offerCommand);
 
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void addElementKO() {
-        Offer emptyOffer = null;
-        Integer size = MockStorage.getInstance().getData().size();
-        offerRepo.addOffer(emptyOffer);
-        assertSame("Element added", size + 1, MockStorage.getInstance().getData().size());
-
-    }
-    
-    /**
-     * This test fails. It shows how I apply TDD, writing the test before implementation.
-     * 
-     */
-    @Test
-    public void getHighestPriceOk() {
-        offerRepo.addOffer(offer);
-        assertSame("Element added", offer.getPrice(), MockStorage.getInstance().getHighestPrice());
+        assertSame("Element added", offerCommand.getPrice(), offerService.getHighestPrice());
 
     }
 
     @Test
-    public void removeElementOk() {
-        Integer size = MockStorage.getInstance().getData().size();
-        offerRepo.addOffer(offer);
-        offerRepo.removeOffer(offer);
-        assertSame("Element added", size, MockStorage.getInstance().getData().size());
+    public void removeOfferRepoOk() throws MissingDataException, OfferAlreadyAddedException,
+            InternalServerErrorException, OfferNotAddedException {
+        AddOfferCommand offerCommand = new AddOfferCommand();
+        offerCommand.setTitle(offer.getTitle());
+        offerCommand.setPrice(offer.getPrice());
+        offerCommand.setExpTime(offer.getExpTime());
+        RemoveOfferCommand remove = new RemoveOfferCommand();
+        remove.setTitle(offer.getTitle());
+        Integer size = offerService.getOffers().size();
+
+        offerService.addOffer(offerCommand);
+        offerService.removeOffer(remove);
+
+        assertSame("Element added", size, offerService.getOffers().size());
 
     }
 

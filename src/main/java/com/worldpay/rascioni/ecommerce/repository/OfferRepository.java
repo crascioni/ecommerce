@@ -12,4 +12,8 @@ public interface OfferRepository {
     public void addOffer(Offer bean);
 
     public void removeOffer(Offer offer);
+    
+    public Offer findByTitle(String title);
+
+    public Float getHighestPrice();
 }

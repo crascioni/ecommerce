@@ -5,24 +5,36 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.worldpay.rascioni.ecommerce.Constants;
 import com.worldpay.rascioni.ecommerce.bean.Offer;
 import com.worldpay.rascioni.ecommerce.command.AddOfferCommand;
 import com.worldpay.rascioni.ecommerce.command.RemoveOfferCommand;
+import com.worldpay.rascioni.ecommerce.exception.InternalServerErrorException;
+import com.worldpay.rascioni.ecommerce.exception.MissingDataException;
+import com.worldpay.rascioni.ecommerce.exception.OfferAlreadyAddedException;
+import com.worldpay.rascioni.ecommerce.exception.OfferNotAddedException;
 import com.worldpay.rascioni.ecommerce.query.OfferDTO;
 import com.worldpay.rascioni.ecommerce.repository.OfferRepository;
+import com.worldpay.rascioni.ecommerce.service.IdFactory;
 import com.worldpay.rascioni.ecommerce.service.OfferService;
 import com.worldpay.rascioni.ecommerce.utility.Utility;
 
 @Service
 public class OfferServiceImpl implements OfferService {
     
+
+    private final OfferRepository offerRepository;
+    private final IdFactory idFactory;
+    
+    
     @Autowired
-    private OfferRepository offerRepository;
+    public OfferServiceImpl(OfferRepository offerRepository, IdFactory idFactory) {
+        super();
+        this.offerRepository = offerRepository;
+        this.idFactory = idFactory;
+    }
 
     @Override
     public List<OfferDTO> getOffers() {
@@ -40,39 +52,53 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public ResponseEntity<String> addOffer(AddOfferCommand bean) {
+    public String addOffer(AddOfferCommand bean) throws MissingDataException, OfferAlreadyAddedException, InternalServerErrorException{
         //Check if the input is null
         if(Utility.isNullOrEmpty(bean.getTitle()) || bean.getPrice() == 0 || bean.getExpTime() == 0) {
-            return new ResponseEntity<String>(Constants.MISSING_DATA_ERROR, HttpStatus.BAD_REQUEST);
+            throw new MissingDataException(Constants.MISSING_DATA_ERROR);
         }
         //Check if the bean has already been added
-        if(Utility.isPresent(bean.getTitle()) != null) {
-            return new ResponseEntity<String>(Constants.ALREADY_ADDED_ERROR, HttpStatus.CONFLICT);
+        if(offerRepository.findByTitle(bean.getTitle()) != null) {
+            throw new OfferAlreadyAddedException(Constants.ALREADY_ADDED_ERROR);
         }       
         Offer offer = new  Offer(
+                idFactory.create(),
                 bean.getTitle(), 
                 bean.getDesc(), 
                 bean.getPrice(), 
                 bean.getExpTime()
                 );
-        
-        offerRepository.addOffer(offer);
-        return new ResponseEntity<String>(Constants.INSERT_OK, HttpStatus.OK);
+     
+        try {
+            offerRepository.addOffer(offer);
+        }catch(Exception e) {
+            throw new InternalServerErrorException(Constants.INTERNAL_SERVER_ERROR);
+        }      
+        return Constants.INSERT_OK;
     }
 
     @Override
-    public ResponseEntity<String> removeOffer(RemoveOfferCommand bean) {
-        //Check if the input is null
-        if(Utility.isNullOrEmpty(bean.getTitle())) {
-            return new ResponseEntity<String>(Constants.MISSING_DATA_ERROR, HttpStatus.BAD_REQUEST);
+    public String removeOffer(RemoveOfferCommand bean) throws MissingDataException, OfferNotAddedException, InternalServerErrorException {
+        // Check if the input is null
+        if (Utility.isNullOrEmpty(bean.getTitle())) {
+            throw new MissingDataException(Constants.MISSING_DATA_ERROR);
         }
-        //Check if the bean is in the collection
-        Offer offer = Utility.isPresent(bean.getTitle());
-        if(offer == null) {
-            return new ResponseEntity<String>(Constants.MISSING_ELEMENT_ERROR, HttpStatus.BAD_REQUEST);
-        }       
-        offerRepository.removeOffer(offer);
-        return new ResponseEntity<String>(Constants.DELETE_OK, HttpStatus.OK);
+        // Check if the bean is in the collection
+        Offer offer = offerRepository.findByTitle(bean.getTitle());
+        if (offer == null) {
+            throw new OfferNotAddedException(Constants.MISSING_ELEMENT_ERROR);
+        }
+        try {
+            offerRepository.removeOffer(offer);
+        } catch (Exception e) {
+            throw new InternalServerErrorException(Constants.INTERNAL_SERVER_ERROR);
+        }
+        return Constants.DELETE_OK;
+    }
+
+    @Override
+    public Float getHighestPrice() {
+        return offerRepository.getHighestPrice();
     }
 
 }
