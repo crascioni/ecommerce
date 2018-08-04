@@ -2,7 +2,7 @@
 
 Assumptions:
 - Data are stored in a Map
-- The currency is defined
+- The currency is £
 - There is a test which fails, this is just to show how TDD works (testing before writing the behavior of the function). I've also used BDD for some tests.
 - The expiration time (expTime) is in minutes
 - He can't add two elements with the same title
