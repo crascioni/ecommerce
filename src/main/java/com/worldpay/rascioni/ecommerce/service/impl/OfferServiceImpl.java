@@ -16,7 +16,7 @@ import com.worldpay.rascioni.ecommerce.command.RemoveOfferCommand;
 import com.worldpay.rascioni.ecommerce.query.OfferDTO;
 import com.worldpay.rascioni.ecommerce.repository.OfferRepository;
 import com.worldpay.rascioni.ecommerce.service.OfferService;
-import com.worldpay.rascioni.ecommerce.utility.MockStorage;
+import com.worldpay.rascioni.ecommerce.utility.Utility;
 
 @Service
 public class OfferServiceImpl implements OfferService {
@@ -41,8 +41,13 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public ResponseEntity<String> addOffer(AddOfferCommand bean) {
-        if(isPresent(bean.getTitle()) != null) {
-            return new ResponseEntity<String>("The element has already been added", HttpStatus.CONFLICT);
+        //Check if the input is null
+        if(Utility.isNullOrEmpty(bean.getTitle()) || bean.getPrice() == 0 || bean.getExpTime() == 0) {
+            return new ResponseEntity<String>(Constants.MISSING_DATA_ERROR, HttpStatus.BAD_REQUEST);
+        }
+        //Check if the bean has already been added
+        if(Utility.isPresent(bean.getTitle()) != null) {
+            return new ResponseEntity<String>(Constants.ALREADY_ADDED_ERROR, HttpStatus.CONFLICT);
         }       
         Offer offer = new  Offer(
                 bean.getTitle(), 
@@ -52,31 +57,22 @@ public class OfferServiceImpl implements OfferService {
                 );
         
         offerRepository.addOffer(offer);
-        return new ResponseEntity<String>("The element has been added to the collection", HttpStatus.OK);
-    }
-    
-    /**
-     * Check if an offer with this name is already inside the collection
-     * @param title the name of the new offer
-     * @return if present, return the offer
-     */
-    private Offer isPresent(String title) {
-        for(Offer offer: MockStorage.getInstance().getData()) {
-            if(offer.getTitle().equals(title)) { 
-                return offer;
-            }
-        }
-        return null;
+        return new ResponseEntity<String>(Constants.INSERT_OK, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<String> removeOffer(RemoveOfferCommand bean) {
-        Offer offer = isPresent(bean.getTitle());
+        //Check if the input is null
+        if(Utility.isNullOrEmpty(bean.getTitle())) {
+            return new ResponseEntity<String>(Constants.MISSING_DATA_ERROR, HttpStatus.BAD_REQUEST);
+        }
+        //Check if the bean is in the collection
+        Offer offer = Utility.isPresent(bean.getTitle());
         if(offer == null) {
-            return new ResponseEntity<String>("The element doesn't exist", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(Constants.MISSING_ELEMENT_ERROR, HttpStatus.BAD_REQUEST);
         }       
         offerRepository.removeOffer(offer);
-        return new ResponseEntity<String>("The element has been removed", HttpStatus.OK);
+        return new ResponseEntity<String>(Constants.DELETE_OK, HttpStatus.OK);
     }
 
 }
