@@ -33,4 +33,4 @@ As a Spring Rest Application, it provides the following services:
         "title": "Mock"
     }
 
-More comments and explanation can be found in the source code
+More comments and explanations can be found in the source code
