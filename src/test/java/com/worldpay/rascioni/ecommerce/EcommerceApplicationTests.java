@@ -19,7 +19,11 @@ import com.worldpay.rascioni.ecommerce.exception.OfferNotAddedException;
 import com.worldpay.rascioni.ecommerce.repository.OfferRepository;
 import com.worldpay.rascioni.ecommerce.service.IdFactory;
 import com.worldpay.rascioni.ecommerce.service.OfferService;
-
+/**
+ * This class executes ServiceImpl's functional tests, so there aren't mock objects. 
+ * @author Christian
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class EcommerceApplicationTests {
@@ -40,6 +44,12 @@ public class EcommerceApplicationTests {
         offer = new Offer(idFactory.create(), "Mock", "this is a mock", 200f, 1);
     }
 
+    /**
+     * Checks the input and throws a MissingDataException
+     * @throws MissingDataException
+     * @throws OfferAlreadyAddedException
+     * @throws InternalServerErrorException
+     */
     @Test(expected = MissingDataException.class)
     public void addOfferBadRequest() throws MissingDataException, OfferAlreadyAddedException, InternalServerErrorException {
         AddOfferCommand emptyOffer = new AddOfferCommand();
@@ -48,6 +58,12 @@ public class EcommerceApplicationTests {
 
     }
 
+    /**
+     * Checks the data and throws a OfferAlreadyAddedException
+     * @throws MissingDataException
+     * @throws OfferAlreadyAddedException
+     * @throws InternalServerErrorException
+     */
     @Test(expected = OfferAlreadyAddedException.class)
     public void addOfferWithSameTitle() throws MissingDataException, OfferAlreadyAddedException, InternalServerErrorException {
         AddOfferCommand offerCommand = new AddOfferCommand();
@@ -79,6 +95,13 @@ public class EcommerceApplicationTests {
 
     }
 
+    /**
+     * Removes an offer from the repository
+     * @throws MissingDataException
+     * @throws OfferAlreadyAddedException
+     * @throws InternalServerErrorException
+     * @throws OfferNotAddedException
+     */
     @Test
     public void removeOfferRepoOk() throws MissingDataException, OfferAlreadyAddedException,
             InternalServerErrorException, OfferNotAddedException {

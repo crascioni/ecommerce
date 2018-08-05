@@ -14,6 +14,7 @@ import com.worldpay.rascioni.ecommerce.repository.OfferRepository;
 
 @Repository
 public class OfferRepositoryImpl implements OfferRepository {
+    //This is the mock where all the date are stored.
     private Map<Offer, LocalDateTime> timeMap = new ConcurrentHashMap<Offer, LocalDateTime>();
     private long expiryTimeInMillis = 1000;
     
@@ -52,7 +53,18 @@ public class OfferRepositoryImpl implements OfferRepository {
         }
         return null;
     }
+    
+    @Override
+    public Float getHighestPrice() {
+        // TODO This method is empty. I've tested it before writing the behavior.
+        return null;
+    }
 
+    /**
+     * This class takes care of checking when an item has expired and removing it from the map.
+     * @author Christian
+     *
+     */
     class CleanerT extends Thread {
         @Override
         public void run() {
@@ -79,11 +91,5 @@ public class OfferRepositoryImpl implements OfferRepository {
                 }
             }
         }
-    }
-
-    @Override
-    public Float getHighestPrice() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

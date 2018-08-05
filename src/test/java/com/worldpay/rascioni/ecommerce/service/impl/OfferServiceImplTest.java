@@ -13,7 +13,11 @@ import com.worldpay.rascioni.ecommerce.exception.InternalServerErrorException;
 import com.worldpay.rascioni.ecommerce.exception.MissingDataException;
 import com.worldpay.rascioni.ecommerce.exception.OfferAlreadyAddedException;
 import com.worldpay.rascioni.ecommerce.repository.OfferRepository;
-
+/**
+ * This class executes ServiceImpl's unit tests. Mockito helps to mock the repository behavior. 
+ * @author Christian
+ *
+ */
 public class OfferServiceImplTest {
     OfferRepository repo;
     OfferServiceImpl service;

@@ -23,8 +23,8 @@ import com.worldpay.rascioni.ecommerce.service.OfferService;
  * 
  * @author Christian
  * Some extra information about the application:
- * I've used some design patters (MVC, Singleton, CQRS) and some libraries to build the application.
- * About testing, I've used JUnit and written them using TDD  
+ * I've used some design patters and some libraries to build and test the application.
+ * About testing, I've used JUnit/Mockito framework and written them using TDD/BDD.  
  *
  */
 @RestController
@@ -43,7 +43,7 @@ public class OfferController {
     }
     
     /**
-     * Add a new offer
+     * Add a new offer. Every exception is handled with a different HTTP status.
      * @param bean the new offer
      * @return the result of the operation
      */
@@ -68,7 +68,7 @@ public class OfferController {
     }
     
     /**
-     * Remove an offer
+     * Remove an offer. Every exception is handled with a different HTTP status.
      * @param bean the offer which has to be removed
      * @return the result of the operation
      */
